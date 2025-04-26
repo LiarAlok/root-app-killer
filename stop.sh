@@ -1,132 +1,85 @@
 #!/bin/bash
 
 # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-# ┃                            APP STOPPER PRO MAX                              ┃
+# ┃                            APP STOPPER PRO MAX v1.2                         ┃
 # ┃                        Created by █▀█ █░░ █▀▀ █▀▄▀█                         ┃
 # ┃                               Liar Alok™                                    ┃
 # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
-# ┌─────────────────────────────────────────────────────────────────────────────┐
-# │  CONFIGURATION                                                             │
-# └─────────────────────────────────────────────────────────────────────────────┘
-COLOR_RESET="\033[0m"
-COLOR_RED="\033[38;5;196m"
-COLOR_GREEN="\033[38;5;40m"
-COLOR_BLUE="\033[38;5;27m"
-COLOR_YELLOW="\033[38;5;226m"
-COLOR_PURPLE="\033[38;5;129m"
-COLOR_CYAN="\033[38;5;51m"
-COLOR_PINK="\033[38;5;205m"
+[ ! "$(whoami)" = "root" ] && {
+    echo -e "\033[38;5;196m✘ Root access required! Use 'su' first.\033[0m"
+    exit 1
+}
 
-EXCLUDED=(
-    com.termux
-    com.android.inputmethod.latin
-    com.google.android.inputmethod.latin
-    
+# Config
+COLORS=(
+    "\033[0m"       # Reset
+    "\033[38;5;196m" # Red
+    "\033[38;5;40m"  # Green
+    "\033[38;5;226m" # Yellow
+    "\033[38;5;129m" # Purple
 )
 
-# ┌─────────────────────────────────────────────────────────────────────────────┐
-# │  ART & VISUALS                                                             │
-# └─────────────────────────────────────────────────────────────────────────────┘
-function print_logo() {
-    echo -e "${COLOR_PURPLE}"
-    echo "   █████╗ ██████╗ ██████╗    ███████╗████████╗ ██████╗ ██████╗ ██████╗ ███████╗██████╗ "
-    echo "  ██╔══██╗██╔══██╗██╔══██╗   ██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗██╔══██╗██╔════╝██╔══██╗"
-    echo "  ███████║██████╔╝██████╔╝   ███████╗   ██║   ██║   ██║██████╔╝██████╔╝█████╗  ██████╔╝"
-    echo "  ██╔══██║██╔═══╝ ██╔═══╝    ╚════██║   ██║   ██║   ██║██╔═══╝ ██╔═══╝ ██╔══╝  ██╔══██╗"
-    echo "  ██║  ██║██║     ██║        ███████║   ██║   ╚██████╔╝██║     ██║     ███████╗██║  ██║"
-    echo "  ╚═╝  ╚═╝╚═╝     ╚═╝        ╚══════╝   ╚═╝    ╚═════╝ ╚═╝     ╚═╝     ╚══════╝╚═╝  ╚═╝"
-    echo -e "${COLOR_RESET}"
+declare -a EXCLUDED=(
+    "com.termux"
+    "com.android.inputmethod.*"
+    "com.google.android.inputmethod.*"
+    "*.launcher*"
+    "com.android.theme.*"
+    "com.custom.overlay.*"
+    "android.auto_generated_rro__*"
+)
+
+# Dynamic exclusion builder
+build_exclusions() {
+    local exclusions=""
+    for pkg in "${EXCLUDED[@]}"; do
+        exclusions+="$pkg|"
+    done
+    echo "${exclusions%|}"
 }
 
-function print_header() {
-    clear
-    print_logo
-    echo -e "${COLOR_CYAN}╔════════════════════════════════════════════════════════════════════════════╗"
-    echo -e "║                     REAL-TIME APP STOPPER WITH INSTANT FEEDBACK                     ║"
-    echo -e "╚════════════════════════════════════════════════════════════════════════════╝${COLOR_RESET}"
-    echo -e "${COLOR_YELLOW}                           Created by Liar Alok™${COLOR_RESET}\n"
-}
+# Main execution
+clear
+echo -e "${COLORS[3]}"
+echo "  █████╗ ██████╗ ██████╗    ███████╗████████╗ ██████╗ ██████╗ ██████╗ ███████╗██████╗ "
+echo " ██╔══██╗██╔══██╗██╔══██╗   ██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗██╔══██╗██╔════╝██╔══██╗"
+echo " ███████║██████╔╝██████╔╝   ███████╗   ██║   ██║   ██║██████╔╝██████╔╝█████╗  ██████╔╝"
+echo " ██╔══██║██╔═══╝ ██╔═══╝    ╚════██║   ██║   ██║   ██║██╔═══╝ ██╔═══╝ ██╔══╝  ██╔══██╗"
+echo " ██║  ██║██║     ██║        ███████║   ██║   ╚██████╔╝██║     ██║     ███████╗██║  ██║"
+echo " ╚═╝  ╚═╝╚═╝     ╚═╝        ╚══════╝   ╚═╝    ╚═════╝ ╚═╝     ╚═╝     ╚══════╝╚═╝  ╚═╝"
+echo -e "${COLORS[0]}"
 
-# ┌─────────────────────────────────────────────────────────────────────────────┐
-# │  CORE FUNCTIONS                                                            │
-# └─────────────────────────────────────────────────────────────────────────────┘
-function show_status() { echo -e "  ${COLOR_BLUE}⌛ ${1}${COLOR_RESET}"; }
-function show_success() { echo -e "  ${COLOR_GREEN}✔ ${1}${COLOR_RESET}"; }
-function show_error() { echo -e "  ${COLOR_RED}✘ ${1}${COLOR_RESET}"; }
+echo -e "${COLORS[4]}╔════════════════════════════════════════════════════════════════════════════╗"
+echo -e "║                     REAL-TIME APP STOPPER WITH INSTANT FEEDBACK                     ║"
+echo -e "╚════════════════════════════════════════════════════════════════════════════╝${COLORS[0]}"
 
-# ┌─────────────────────────────────────────────────────────────────────────────┐
-# │  MAIN EXECUTION                                                           │
-# └─────────────────────────────────────────────────────────────────────────────┘
-print_header
+# Get packages
+mapfile -t ALL_PKGS < <(pm list packages -e | cut -d: -f2)
+FILTER=$(build_exclusions)
+TOTAL=0 STOPPED=0 FAILED=0
 
-# Check root
-if ! su -c true; then
-    show_error "Root access required!"
-    exit 1
-fi
+echo -e "\n${COLORS[4]}▶ Processing applications...${COLORS[0]}\n"
 
-# Prepare packages
-EXCLUDED_PATTERN=$(IFS="|"; echo "${EXCLUDED[*]}")
-PACKAGES=$(su -c "pm list packages -e" | cut -d':' -f2 | grep -vE "^(${EXCLUDED_PATTERN})$")
-TOTAL=$(echo "$PACKAGES" | wc -l)
-COUNT=0 STOPPED=0 FAILED=0
-
-echo -e "${COLOR_PURPLE}╔════════════════════════════════════════════════════════════════════════════╗"
-echo -e "║                        LIVE APPLICATION STOPPING FEEDBACK                        ║"
-echo -e "╚════════════════════════════════════════════════════════════════════════════╝${COLOR_RESET}"
-
-# Process apps with instant feedback
-while read -r package; do
-    ((COUNT++))
-    echo -ne "${COLOR_YELLOW}Processing: ${COUNT}/${TOTAL} apps\r${COLOR_RESET}"
+for pkg in "${ALL_PKGS[@]}"; do
+    [[ $pkg =~ $FILTER ]] && continue
+    ((TOTAL++))
     
-    if su -c "am force-stop $package" >/dev/null 2>&1; then
-        echo -e "  ${COLOR_GREEN}✔ Stopped: ${package}${COLOR_RESET}"
+    if am force-stop "$pkg" 2>/dev/null; then
+        echo -e "  ${COLORS[2]}✅ Done =${pkg}${COLORS[0]}"
         ((STOPPED++))
     else
-        echo -e "  ${COLOR_RED}✘ Failed: ${package}${COLOR_RESET}"
+        echo -e "  ${COLORS[1]}✘ Error ${pkg}${COLORS[0]}"
         ((FAILED++))
     fi
-done <<< "$PACKAGES"
+done
 
-
-# ... (keep all previous code until the final report section)
-
-# ... (keep all previous code until the final report section)
-
-# Final report with enhanced decorations
-echo -e "\n${COLOR_PURPLE}╔════════════════════════════════════════════════════════════════════════════╗"
-echo -e "║                                                                                ║"
-echo -e "║            ${COLOR_CYAN}▛▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▜${COLOR_PURPLE}            ${COLOR_CYAN}▛▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▜${COLOR_PURPLE}           ║"
-echo -e "║            ${COLOR_CYAN}▌  FINAL REPORT  ▐${COLOR_PURPLE}            ${COLOR_CYAN}▌   STATS      ▐${COLOR_PURPLE}           ║"
-echo -e "║            ${COLOR_CYAN}▙▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▟${COLOR_PURPLE}            ${COLOR_CYAN}▙▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▟${COLOR_PURPLE}           ║"
-echo -e "║                                                                                ║"
-echo -e "║  ${COLOR_YELLOW}█▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█${COLOR_PURPLE}                  ║"
-echo -e "║  ${COLOR_YELLOW}█               APPLICATION STATS               █${COLOR_PURPLE}                  ║"
-echo -e "║  ${COLOR_YELLOW}█▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█${COLOR_PURPLE}                  ║"
-echo -e "║  ${COLOR_GREEN}⟫ Success Rate:   $(( STOPPED * 100 / TOTAL ))% ${COLOR_PURPLE}                                 ║"
-echo -e "║  ${COLOR_GREEN}⟫ Stopped Apps:   ${STOPPED} ${COLOR_PURPLE}                                                   ║"
-echo -e "║  ${COLOR_RED}⟫ Failed Apps:    ${FAILED} ${COLOR_PURPLE}                                                   ║"
-echo -e "║  ${COLOR_YELLOW}⟫ Total Processed: ${TOTAL} ${COLOR_PURPLE}                                                   ║"
-echo -e "║                                                                                ║"
-echo -e "║  ${COLOR_CYAN}▛▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▜${COLOR_PURPLE}  ║"
-echo -e "║  ${COLOR_CYAN}▌          SYSTEM STATUS: CRITICAL APPS PRESERVED          ▐${COLOR_PURPLE}  ║"
-echo -e "║  ${COLOR_CYAN}▙▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▟${COLOR_PURPLE}  ║"
-echo -e "║                                                                                ║"
-echo -e "╚════════════════════════════════════════════════════════════════════════════╝"
-
-echo -e "\n${COLOR_PINK}"
-echo "  ████████╗██╗  ██╗ █████╗ ███╗   ██╗██╗  ██╗███████╗██╗   ██╗ ██████╗ "
-echo "  ╚══██╔══╝██║  ██║██╔══██╗████╗  ██║██║ ██╔╝██╔════╝╚██╗ ██╔╝██╔════╝ "
-echo "     ██║   ███████║███████║██╔██╗ ██║█████╔╝ █████╗   ╚████╔╝ ██║  ███╗"
-echo "     ██║   ██╔══██║██╔══██║██║╚██╗██║██╔═██╗ ██╔══╝    ╚██╔╝  ██║   ██║"
-echo "     ██║   ██║  ██║██║  ██║██║ ╚████║██║  ██╗███████╗   ██║   ╚██████╔╝"
-echo "     ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝   ╚═╝    ╚═════╝ "
-echo -e "${COLOR_RESET}"
-
-echo -e "${COLOR_CYAN}╔════════════════════════════════════════════════════════════════════════════╗"
-echo -e "║ ${COLOR_YELLOW}🚀 Powered by Liar Alok™ • 🛡️  System Protection Suite • 🔥 Instant Execution ${COLOR_CYAN}║"
-echo -e "╚════════════════════════════════════════════════════════════════════════════╝${COLOR_RESET}"
-
+# Results
+echo -e "\n${COLORS[4]}╔════════════════════════════════════════════════════════════════════════════╗"
+echo -e "║                            OPERATION SUMMARY                                ║"
+echo -e "╠════════════════════════════════════════════════════════════════════════════╣"
+echo -e "║ ${COLORS[3]}Total Scanned: $TOTAL${COLORS[0]}${COLORS[4]}                                                   ║"
+echo -e "║ ${COLORS[2]}Stopped: $STOPPED${COLORS[0]}${COLORS[4]}                                                         ║"
+echo -e "║ ${COLORS[1]}Failed: $FAILED${COLORS[0]}${COLORS[4]}                                                          ║"
+echo -e "╚════════════════════════════════════════════════════════════════════════════╝${COLORS[0]}"
 
