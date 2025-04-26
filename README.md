@@ -21,10 +21,8 @@
 ### 🛡️ Safety
 ```bash
 # Auto-protected apps
-• Termux
-• Keyboard apps 
+• Termux 
 • Launchers
-• DeepSeek Chat
 • System themes
 • Custom overlays
 ```
@@ -51,7 +49,7 @@
 ### Steps
 ```bash
 # 1. Download script
-curl -LO https://raw.githubusercontent.com/yourprofile/app-stopper/main/stop.sh
+curl -LO https://raw.githubusercontent/LiarAlok/root-app-killer/edit/main/stop.sh
 
 # 2. Make executable
 chmod +x stop.sh
@@ -67,8 +65,7 @@ EXCLUDED=(
     "com.termux"
     "*.inputmethod*"  # All keyboards
     "*.launcher*"     # All launchers
-    "com.deepseek.chat"
-    # Add your packages here
+    
 )
 ```
 
